@@ -77,8 +77,8 @@ def main(args):
 
     # dataset
     trnsfm = transforms.Compose([
-        transforms.Resize(args.cn_input_size),
-        transforms.RandomCrop((args.cn_input_size, args.cn_input_size)),
+        #transforms.Resize(args.cn_input_size),
+        #transforms.RandomCrop((args.cn_input_size, args.cn_input_size)),
         transforms.ToTensor(),
     ])
     print('loading dataset... (it may take a few minutes)')
@@ -136,13 +136,11 @@ def main(args):
 
             # forward
             x = x.to(gpu)
-            mask = gen_input_mask(
-                shape=(x.shape[0], 1, x.shape[2], x.shape[3]),
-                hole_size=((args.hole_min_w, args.hole_max_w), (args.hole_min_h, args.hole_max_h)),
-                hole_area=gen_hole_area((args.ld_input_size, args.ld_input_size), (x.shape[3], x.shape[2])),
-                max_holes=args.max_holes,
-            ).to(gpu)
-            x_mask = x - x * mask + mpv * mask
+            # mask = gen_input_mask(
+            #     shape=(x.shape[0], 3, x.shape[2], x.shape[3]),
+            #     position = 
+            #     w_h = ).to(gpu)
+            # x_mask = x - x * mask + mpv * mask
             input = torch.cat((x_mask, mask), dim=1)
             output = model_cn(input)
             loss = completion_network_loss(x, output, mask)

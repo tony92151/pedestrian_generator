@@ -48,9 +48,11 @@ class ImageDataset(data.Dataset):
         input_img = img.crop((cw-128, ch-128, cw+128, ch+128)) #left, top, right, bottom
         mask_with_poeple = mask.crop((cw-128, ch-128, cw+128, ch+128)) #left, top, right, bottom       
 
-        img = img.convert(color_format)
+        input_img = input_img.convert(color_format)
         if self.transform is not None:
-            img = self.transform(img)
+            input_img = self.transform(input_img)
+            mask_with_poeple = self.transform(mask_with_poeple)
+            
         return input_img, mask_with_poeple#, content_img
 
     def load_img_from_index():

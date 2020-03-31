@@ -7,10 +7,13 @@ import random
 from PIL import Image
 import glob
 import json
+import numpy as np
+
+import math
 
 
 class ImageDataset(data.Dataset):
-    def __init__(self, data_dir, transform=None, recursive_search=False):
+    def __init__(self, data_dir, transform=None, recursive_search=False, preload2mem = False):
         super(ImageDataset, self).__init__()
         self.data_dir = os.path.expanduser(data_dir)
         self.transform = transform
@@ -23,18 +26,38 @@ class ImageDataset(data.Dataset):
         return len(self.street_imgpaths)
 
     def __getitem__(self, index, color_format='RGB'):
-        img = Image.open(self.street_imgpaths[index])
+        # Load street image
+        img = Image.open(self.poeple_imgpaths[index])
+        poeple_img = Image.open(self.street_imgpaths[index])
+        img = img.convert('RGB')
 
-        data = 0
-        with open(self.position_jsonpaths[index]) as json_file:
+        # Create plain mask image
+        mask = Image.fromarray(np.zeros((img.size[1],img.size[0]),dtype="uint8"))
+        mask = mask.convert('RGB')
+
+        # Load data information from .json file
+        with open("/home/guest2/Documents/tony/000000.json") as json_file:
             data = json.load(json_file)
         
-        box_x, box_y, box_w, box_h = data[0]['pos'][0],data[0]['pos'][1],data[0]['pos'][2],data[0]['pos'][3]
+        box_x, box_y, box_w, box_h = int(data['people']['pos'][0]['0']), int(data['people']['pos'][0]['0']), 64, 128
+
+        cw, ch = math.floor(img.size[0]/2), math.floor(img.size[1]/2)
+
+        mask.paste(poeple_img,(math.floor(img.size[0]/2-(box_w/2)),math.floor(img.size[1]/2-(box_h/2))))
+
+        input_img = img.crop((cw-128, ch-128, cw+128, ch+128)) #left, top, right, bottom
+        mask_with_poeple = mask.crop((cw-128, ch-128, cw+128, ch+128)) #left, top, right, bottom       
 
         img = img.convert(color_format)
         if self.transform is not None:
             img = self.transform(img)
-        return input_img, mask_with_poeple, content_img
+        return input_img, mask_with_poeple#, content_img
+
+    def load_img_from_index():
+        pass
+
+    def preload_images():
+        pass
 
     # def __is_imgfile(self, filepath):
     #     filepath = os.path.expanduser(filepath)

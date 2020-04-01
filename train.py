@@ -71,9 +71,9 @@ def main(args):
     # create result directory (if necessary)
     if os.path.exists(args.result_dir) == False:
         os.makedirs(args.result_dir)
-    for s in ['phase_1', 'phase_2', 'phase_3']:
-        if os.path.exists(os.path.join(args.result_dir, s)) == False:
-            os.makedirs(os.path.join(args.result_dir, s))
+#     for s in ['phase_1', 'phase_2', 'phase_3']:
+#         if os.path.exists(os.path.join(args.result_dir, s)) == False:
+#             os.makedirs(os.path.join(args.result_dir, s))
 
     # dataset
     trnsfm = transforms.Compose([

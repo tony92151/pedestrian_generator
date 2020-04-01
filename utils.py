@@ -114,12 +114,15 @@ def sample_random_batch(dataset, batch_size=32):
             A mini-batch randomly sampled from the input dataset.
     """
     num_samples = len(dataset)
-    batch = []
+    batch1 = []
+    batch2 = []
     for _ in range(min(batch_size, num_samples)):
         index = random.choice(range(0, num_samples))
-        x = torch.unsqueeze(dataset[index], dim=0)
-        batch.append(x)
-    return torch.cat(batch, dim=0)
+        x1 = torch.unsqueeze(dataset[index][0], dim=0)
+        x2 = torch.unsqueeze(dataset[index][1], dim=0)
+        batch1.append(x1)
+        batch2.append(x2)
+    return torch.cat(batch1, dim=0), torch.cat(batch2, dim=0)
 
 
 def poisson_blend(x, output, mask):
@@ -138,7 +141,7 @@ def poisson_blend(x, output, mask):
     x = x.clone().cpu()
     output = output.clone().cpu()
     mask = mask.clone().cpu()
-    mask = torch.cat((mask,mask,mask), dim=1) # convert to 3-channel format
+    #mask = torch.cat((mask,mask,mask), dim=1) # convert to 3-channel format
     num_samples = x.shape[0]
     ret = []
     for i in range(num_samples):
@@ -149,15 +152,16 @@ def poisson_blend(x, output, mask):
         msk = transforms.functional.to_pil_image(mask[i])
         msk = np.array(msk)[:, :, [2, 1, 0]]
         # compute mask's center
-        xs, ys = [], []
-        for i in range(msk.shape[0]):
-            for j in range(msk.shape[1]):
-                if msk[i,j,0] == 255:
-                    ys.append(i)
-                    xs.append(j)
-        xmin, xmax = min(xs), max(xs)
-        ymin, ymax = min(ys), max(ys)
-        center = ((xmax + xmin) // 2, (ymax + ymin) // 2)
+#         xs, ys = [], []
+#         for i in range(msk.shape[0]):
+#             for j in range(msk.shape[1]):
+#                 if msk[i,j,0] == 255:
+#                     ys.append(i)
+#                     xs.append(j)
+#         xmin, xmax = min(xs), max(xs)
+#         ymin, ymax = min(ys), max(ys)
+#         center = ((xmax + xmin) // 2, (ymax + ymin) // 2)
+        center = (128,128)
         out = cv2.seamlessClone(srcimg, dstimg, msk, center, cv2.NORMAL_CLONE)
         out = out[:, :, [2, 1, 0]]
         out = transforms.functional.to_tensor(out)

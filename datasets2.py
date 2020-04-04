@@ -24,7 +24,7 @@ class ImageDataset(data.Dataset):
         self.load2meme = load2meme
         if (self.load2meme):
             #print("Load all images to mem")
-            self.pre_tre_imgs, self.pre_peo_imgs= self.img_in_mem(self.street_imgpaths, self.people_imgpaths, self.position_jsonpaths)
+            self.pre_tre_imgs, self.pre_peo_imgs, self.left_top= self.img_in_mem(self.street_imgpaths, self.people_imgpaths, self.position_jsonpaths)
             
 
     def __len__(self):
@@ -32,7 +32,7 @@ class ImageDataset(data.Dataset):
 
     def __getitem__(self, index):
         if (self.load2meme):
-            out1, out2 = self.pre_tre_imgs[index], self.pre_peo_imgs[index]
+            out1, out2, out3 = self.pre_tre_imgs[index], self.pre_peo_imgs[index], np.array(self.left_top[index])
         else:
             # Load street image
             img = Image.open(self.street_imgpaths[index])
@@ -52,6 +52,8 @@ class ImageDataset(data.Dataset):
             cw, ch = math.floor(img.size[0]/2), math.floor(img.size[1]/2)
 
             mask.paste(people_img,(math.floor(img.size[0]/2-(box_w/2)),math.floor(img.size[1]/2-(box_h/2))))
+            
+            lt = [math.floor(img.size[0]/2-(box_w/2)),math.floor(img.size[1]/2-(box_h/2))]
 
             input_img = img.crop((cw-128, ch-128, cw+128, ch+128)) #left, top, right, bottom
             mask_with_poeple = mask.crop((cw-128, ch-128, cw+128, ch+128)) #left, top, right, bottom       
@@ -60,14 +62,15 @@ class ImageDataset(data.Dataset):
             if self.transform is not None:
                 input_img = self.transform(input_img)
                 mask_with_poeple = self.transform(mask_with_poeple)
-            out1, out2 = input_img, mask_with_poeple
+            out1, out2, out3 = input_img, mask_with_poeple, np.array(lt)
             
-        return out1, out2
+        return out1, out2, out3
 
 
     def img_in_mem(self, str_img, people_img, position_json):
         str_imgs = []
         mask_people_imgs = []
+        left_top = []
         pbar = tqdm(total=len(str_img))
         
         for index in range(len(str_img)):
@@ -90,7 +93,9 @@ class ImageDataset(data.Dataset):
             mask.paste(peo_img,(math.floor(img.size[0]/2-(box_w/2)),math.floor(img.size[1]/2-(box_h/2))))
 
             input_img = img.crop((cw-128, ch-128, cw+128, ch+128)) #left, top, right, bottom
-            mask_with_poeple = mask.crop((cw-128, ch-128, cw+128, ch+128)) #left, top, right, bottom       
+            mask_with_poeple = mask.crop((cw-128, ch-128, cw+128, ch+128)) #left, top, right, bottom    
+            
+            lt = [math.floor(img.size[0]/2-(box_w/2)),math.floor(img.size[1]/2-(box_h/2))]
 
             input_img = input_img.convert('RGB')
             mask_with_poeple = mask_with_poeple.convert('RGB')
@@ -100,6 +105,7 @@ class ImageDataset(data.Dataset):
                 
             str_imgs.append(input_img)
             mask_people_imgs.append(mask_with_poeple)
+            left_top.append(lt)
             pbar.update()
         pbar.close()
-        return str_imgs, mask_people_imgs
+        return str_imgs, mask_people_imgs, left_top

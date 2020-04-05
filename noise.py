@@ -4,7 +4,7 @@ import torch
 
 # https://discuss.pytorch.org/t/how-to-add-noise-to-mnist-dataset-when-using-pytorch/59745
 class AddGaussianNoise(object):
-    def __init__(self, mean=0., std=1.):
+    def __init__(self, mean=0., std=.1):
         self.std = std
         self.mean = mean
         

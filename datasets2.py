@@ -13,9 +13,10 @@ import math
 from tqdm import tqdm
 
 class ImageDataset(data.Dataset):
-    def __init__(self, data_dir, transform=None, load2meme = False):
+    def __init__(self, data_dir, transform=None,transform2=None, load2meme = False):
         super(ImageDataset, self).__init__()
         self.transform = transform
+        self.transform2 = transform2
         
         self.street_imgpaths = glob.glob(data_dir+'/street_view/*')
         self.people_imgpaths = glob.glob(data_dir+'/people/*')
@@ -61,7 +62,7 @@ class ImageDataset(data.Dataset):
             input_img = input_img.convert('RGB')
             if self.transform is not None:
                 input_img = self.transform(input_img)
-                mask_with_poeple = self.transform(mask_with_poeple)
+                mask_with_poeple = self.transform2(mask_with_poeple)
             out1, out2, out3 = input_img, mask_with_poeple, np.array(lt)
             
         return out1, out2, out3
@@ -101,7 +102,7 @@ class ImageDataset(data.Dataset):
             mask_with_poeple = mask_with_poeple.convert('RGB')
             if self.transform is not None:
                 input_img = self.transform(input_img)
-                mask_with_poeple = self.transform(mask_with_poeple)
+                mask_with_poeple = self.transform2(mask_with_poeple)
                 
             str_imgs.append(input_img)
             mask_people_imgs.append(mask_with_poeple)

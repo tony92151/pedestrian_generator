@@ -13,7 +13,7 @@ def completion_network_loss_P(background, person, output, lefttop, height = 64 ,
     batchsize = output.shape[0]
     for i in range(batchsize):
         left , top = lefttop[i][0],lefttop[i][1]
-        mask[ i , : , top : top + height , left : left + width]  = 1
+        mask[ i , top : top + height , left : left + width,:]  = 1
 
     return 0.7*mse_loss(output * mask, person * mask) + 0.3*mse_loss(output, background)
 

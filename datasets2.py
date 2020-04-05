@@ -51,9 +51,9 @@ class ImageDataset(data.Dataset):
 
             cw, ch = math.floor(img.size[0]/2), math.floor(img.size[1]/2)
 
-            mask.paste(people_img,(math.floor(img.size[0]/2-(box_w/2)),math.floor(img.size[1]/2-(box_h/2))))
+            mask.paste(people_img,(math.floor(cw-(box_w/2)),math.floor(ch-(box_h/2))))
             
-            lt = [math.floor(img.size[0]/2-(box_w/2)),math.floor(img.size[1]/2-(box_h/2))]
+            lt = [96,64]
 
             input_img = img.crop((cw-128, ch-128, cw+128, ch+128)) #left, top, right, bottom
             mask_with_poeple = mask.crop((cw-128, ch-128, cw+128, ch+128)) #left, top, right, bottom       

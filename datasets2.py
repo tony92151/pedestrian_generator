@@ -96,8 +96,8 @@ class ImageDataset(data.Dataset):
             input_img = img.crop((cw-128, ch-128, cw+128, ch+128)) #left, top, right, bottom
             mask_with_poeple = mask.crop((cw-128, ch-128, cw+128, ch+128)) #left, top, right, bottom    
             
-            lt = [math.floor(img.size[0]/2-(box_w/2)),math.floor(img.size[1]/2-(box_h/2))]
-
+            lt = [96,64]
+            
             input_img = input_img.convert('RGB')
             mask_with_poeple = mask_with_poeple.convert('RGB')
             if self.transform is not None:

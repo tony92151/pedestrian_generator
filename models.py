@@ -106,6 +106,10 @@ class CompletionNetwork(nn.Module):
         self.conv10 = nn.Conv2d(256, 256, kernel_size=3, stride=1, dilation=16, padding=16)
         self.bn10 = nn.BatchNorm2d(256)
         self.act10 = nn.ReLU()
+        
+        # self
+        self.self_attn3 = Self_Attn(256)
+        
         # input_shape: (None, 256, img_h//4, img_w//4)
         self.conv11 = nn.Conv2d(256, 256, kernel_size=3, stride=1, padding=1)
         self.bn11 = nn.BatchNorm2d(256)
@@ -148,6 +152,7 @@ class CompletionNetwork(nn.Module):
         x = self.self_attn2(x)
         x = self.bn9(self.act9(self.conv9(x)))
         x = self.bn10(self.act10(self.conv10(x)))
+        x = self.self_attn3(x)
         x = self.bn11(self.act11(self.conv11(x)))
         x = self.bn12(self.act12(self.conv12(x)))
         x = self.bn13(self.act13(self.deconv13(x)))
@@ -355,6 +360,7 @@ class GlobalDiscriminator_P(nn.Module):
         
         # self
         self.self_attn1 = Self_Attn(128)
+        self.self_attn2 = Self_Attn(128)
         
         # input_shape: (None, 128, img_h//4, img_w//4)
         self.conv3 = nn.Conv2d(128, 256, kernel_size=5, stride=2, padding=2)
@@ -362,7 +368,7 @@ class GlobalDiscriminator_P(nn.Module):
         self.act3 = nn.ReLU()
         
         # self
-        self.self_attn2 = Self_Attn(256)
+        self.self_attn3 = Self_Attn(256)
         
         # input_shape: (None, 256, img_h//8, img_w//8)
         self.conv4 = nn.Conv2d(256, 512, kernel_size=5, stride=2, padding=2)
@@ -387,8 +393,9 @@ class GlobalDiscriminator_P(nn.Module):
         x = self.bn1(self.act1(self.conv1(x)))
         x = self.bn2(self.act2(self.conv2(x)))
         x = self.self_attn1(x)
-        x = self.bn3(self.act3(self.conv3(x)))
         x = self.self_attn2(x)
+        x = self.bn3(self.act3(self.conv3(x)))
+        #x = self.self_attn2(x)
         x = self.bn4(self.act4(self.conv4(x)))
         x = self.bn5(self.act5(self.conv5(x)))
         

@@ -11,11 +11,16 @@ def completion_network_loss_P(background, person, output, lefttop, height = 64 ,
     * output:
         - shape: batchsize * 3 * 256 * 256
     """
-    mask = torch.zeros(size = output.shape).to(devices)
+    output_crop = torch.zeros([output.shape[0],3,128,64]).to(devices)
+    person_crop = torch.zeros([output.shape[0],3,128,64]).to(devices)
+    
+    #mask = torch.zeros(size = output.shape).to(devices)
     batchsize = output.shape[0]
     for i in range(batchsize):
         left , top = lefttop[i][0],lefttop[i][1]
-        mask[ i ,:, top : top + height , left : left + width]  = 1
+        output_crop[i,:,:,:] = output[i,:,top : top + height , left : left + width]
+        person_crop[i,:,:,:] = person[i,:,top : top + height , left : left + width]
+        #mask[ i ,:, top : top + height , left : left + width]  = 1
 
-    return 0.7*mse_loss(output * mask, person * mask) + 0.3*mse_loss(output, background)
+    return 0.7*mse_loss(output_crop, person_crop) + 0.3*mse_loss(output, background)
 

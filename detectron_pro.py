@@ -42,6 +42,22 @@ def mask_img(img_path,resize=None):
     mask = outputs["instances"].pred_masks.cpu().numpy()[0][int((256/2)-(img.shape[0]/2)):int((256/2)+(img.shape[0]/2)),int((256/2)-(img.shape[1]/2)):int((256/2)+(img.shape[1]/2))]
     
     return mask
+
+
+def mask_img_composite(img_path,resize=None):
+    img = cv2.imread(img_path)
+    if (resize!=None):
+        img = cv2.resize(img, resize)
+
+    backg = np.zeros([256,256,3]).astype(np.uint8)    
+    backg[int((256/2)-(img.shape[0]/2)):int((256/2)+(img.shape[0]/2)),int((256/2)-(img.shape[1]/2)):int((256/2)+(img.shape[1]/2)),:] = img
+    outputs = predictor(backg)
+    mask = outputs["instances"].pred_masks.cpu().numpy()[0]
+    mask = mask[int((256/2)-(img.shape[0]/2)):int((256/2)+(img.shape[0]/2)),int((256/2)-(img.shape[1]/2)):int((256/2)+(img.shape[1]/2))]
+    
+    result = cv2.cvtColor(mask.astype(np.uint8) , cv2.COLOR_GRAY2RGB)*img
+    
+    return result
     
     
         

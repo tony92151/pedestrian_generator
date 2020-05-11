@@ -9,7 +9,7 @@ import glob
 import json
 import numpy as np
 import math
-
+from detectron_pro import mask_img,mask_img_composite
 from tqdm import tqdm
 
 class ImageDataset(data.Dataset):
@@ -18,9 +18,10 @@ class ImageDataset(data.Dataset):
         self.transform = transform
         self.transform2 = transform2
         
-        self.street_imgpaths = glob.glob(data_dir+'/street_view/*')
-        self.people_imgpaths = glob.glob(data_dir+'/people/*')
-        self.position_jsonpaths = glob.glob(data_dir+'/json/*')
+        self.street_imgpaths = sorted(glob.glob(data_dir+'/street_view/*'), key=lambda x: x[-10:-3])
+        self.people_imgpaths = sorted(glob.glob(data_dir+'/people/*'), key=lambda x: x[-10:-3])
+        self.position_jsonpaths = sorted(glob.glob(data_dir+'/json/*'), key=lambda x: x[-10:-3])
+        self.poeple_masks = sorted(glob.glob(data_dir+'/mask/*'), key=lambda x: x[-10:-3])
         
         self.load2meme = load2meme
         if (self.load2meme):
@@ -38,6 +39,10 @@ class ImageDataset(data.Dataset):
             # Load street image
             img = Image.open(self.street_imgpaths[index])
             people_img = Image.open(self.people_imgpaths[index])
+            #people_img = Image.fromarray(mask_img_composite(self.people_imgpaths[index],(64,128))[:,:,[2,1,0]])
+            
+            people_mask = Image.open(self.poeple_masks[index])
+            
             img = img.convert('RGB')
 
             # Create plain mask image
@@ -48,7 +53,7 @@ class ImageDataset(data.Dataset):
             with open(self.position_jsonpaths[index]) as json_file:
                 data = json.load(json_file)
 
-            box_x, box_y, box_w, box_h = int(data['people']['pos'][0]['0']), int(data['people']['pos'][0]['0']), 64, 128
+            box_x, box_y, box_w, box_h = int(data[0]['pos'][0]), int(data[0]['pos'][0]['0']), 64, 128
 
             cw, ch = math.floor(img.size[0]/2), math.floor(img.size[1]/2)
 
@@ -68,7 +73,7 @@ class ImageDataset(data.Dataset):
         return out1, out2, out3
 
 
-    def img_in_mem(self, str_img, people_img, position_json):
+    def img_in_mem(self, str_img, people_img, position_json, mask_poeple):
         str_imgs = []
         mask_people_imgs = []
         left_top = []
@@ -76,7 +81,8 @@ class ImageDataset(data.Dataset):
         
         for index in range(len(str_img)):
             img = Image.open(str_img[index])
-            peo_img = Image.open(people_img[index])
+            #peo_img = Image.open(people_img[index])
+            peo_img = Image.fromarray(mask_img_composite(self.people_imgpaths[index],(64,128))[:,:,[2,1,0]])
             img = img.convert('RGB')
 
             # Create plain mask image

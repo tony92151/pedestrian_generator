@@ -24,5 +24,6 @@ def completion_network_loss_P(background, person, mask, output, lefttop, height 
         mask_crop[i,:,:,:] = mask[i,:,top : top + height , left : left + width]
         #mask[ i ,:, top : top + height , left : left + width]  = 1
 
-    return 0.5*mse_loss(output_crop, person_crop) + 0.35*mse_loss(output, background) + 0.15*(-1)*mse_loss(mask_crop,person_crop)
+    #return 0.5*mse_loss(output_crop, person_crop) + 0.35*mse_loss(output, background) + 0.15*(-1)*mse_loss(mask_crop,person_crop)
+    return 0.7*mse_loss(output_crop, person_crop) + 0.3*mse_loss(output, background)
 

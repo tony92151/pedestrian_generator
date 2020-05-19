@@ -116,13 +116,16 @@ def sample_random_batch(dataset, batch_size=32):
     num_samples = len(dataset)
     batch1 = []
     batch2 = []
+    batch3 = []
     for _ in range(min(batch_size, num_samples)):
         index = random.choice(range(0, num_samples))
         x1 = torch.unsqueeze(dataset[index][0], dim=0)
         x2 = torch.unsqueeze(dataset[index][1], dim=0)
+        x3 = torch.unsqueeze(dataset[index][2], dim=0)
         batch1.append(x1)
         batch2.append(x2)
-    return torch.cat(batch1, dim=0), torch.cat(batch2, dim=0)
+        batch3.append(x3)
+    return torch.cat(batch1, dim=0), torch.cat(batch2, dim=0), torch.cat(batch3, dim=0)
 
 
 def poisson_blend(x, output, mask):

@@ -19,7 +19,7 @@ class ImageDataset(data.Dataset):
         self.transform = transform
         self.transform2 = transform2
         
-        self.street_imgpaths = sorted(glob.glob(data_dir+'/street/*'), key=lambda x: x[-10:-3])[:1000]
+        self.street_imgpaths = sorted(glob.glob(data_dir+'/street/*'), key=lambda x: x[-10:-3])[:3000]
 
         
         self.people_imgpaths = [i.replace('street', 'people') for i in self.street_imgpaths]
@@ -30,9 +30,6 @@ class ImageDataset(data.Dataset):
             js = i.replace('street', 'json')
             js = js.replace('jpg', 'json')
             self.position_jsonpaths.append(js)
-        #self.people_imgpaths = sorted(glob.glob(data_dir+'/people/*'), key=lambda x: x[-10:-3])
-        #self.position_jsonpaths = sorted(glob.glob(data_dir+'/json/*'), key=lambda x: x[-10:-3])
-        #self.poeple_maskspaths = sorted(glob.glob(data_dir+'/mask/*'), key=lambda x: x[-10:-3])
         
         self.load2meme = load2meme
         if (self.load2meme):
@@ -73,20 +70,25 @@ class ImageDataset(data.Dataset):
             with open(self.position_jsonpaths[index]) as json_file:
                 data = json.load(json_file)
 
-            box_x, box_y, box_w, box_h = int(data[0]['pos'][0]), int(data[0]['pos'][1]), int(data[0]['pos'][2]),int(data[0]['pos'][3])
+            #box_x, box_y, box_w, box_h = int(data[0]['pos'][0]), int(data[0]['pos'][1]), int(data[0]['pos'][2]),int(data[0]['pos'][3])
+
+            box_x, box_y, box_w, box_h = math.floor(street_img.size[0]/2)-32, math.floor(street_img.size[1]/2)-64, 64, 128
 
             cw, ch = math.floor(street_img.size[0]/2), math.floor(street_img.size[1]/2)
 
             street_img2.paste(people_img,(box_x,box_y),masks_img)
             plain_mask.paste(people_img,(box_x,box_y),masks_img)
             
-            lt = [box_x-cw+128,box_y-ch+128,box_w, box_h]
+            lt = [box_x,box_y]
 
-            input_img = street_img.crop((cw-128, ch-128, cw+128, ch+128)) #left, top, right, bottom
-            mask_with_poeple = street_img2.crop((cw-128, ch-128, cw+128, ch+128)) #left, top, right, bottom       
+            #input_img = street_img.crop((cw-128, ch-128, cw+128, ch+128)) #left, top, right, bottom
+            #mask_with_poeple = street_img2.crop((cw-128, ch-128, cw+128, ch+128)) #left, top, right, bottom    
+
+            input_img = street_img
+            mask_with_poeple = street_img2
 
             plain_mask.paste(masks_img,(box_x,box_y))
-            plain_mask = plain_mask.crop((cw-128, ch-128, cw+128, ch+128))
+            #plain_mask = plain_mask.crop((cw-128, ch-128, cw+128, ch+128))
 
             #input_img = input_img.convert('RGB')
             if self.transform is not None:
@@ -123,20 +125,23 @@ class ImageDataset(data.Dataset):
             with open(self.position_jsonpaths[index]) as json_file:
                 data = json.load(json_file)
 
-            box_x, box_y, box_w, box_h = int(data[0]['pos'][0]), int(data[0]['pos'][1]), int(data[0]['pos'][2]),int(data[0]['pos'][3])
+            # box_x, box_y, box_w, box_h = int(data[0]['pos'][0]), int(data[0]['pos'][1]), int(data[0]['pos'][2]),int(data[0]['pos'][3])
+            box_x, box_y, box_w, box_h = math.floor(street_img.size[0]/2)-32, math.floor(street_img.size[1]/2)-64, 64, 128
 
             cw, ch = math.floor(street_img.size[0]/2), math.floor(street_img.size[1]/2)
 
             street_img2.paste(people_img,(box_x,box_y),masks_img)
             plain_mask.paste(people_img,(box_x,box_y),masks_img)
             
-            lt = [box_x-cw+128,box_y-ch+128,box_w, box_h]
+            lt = [box_x,box_y]
 
-            input_img = street_img.crop((cw-128, ch-128, cw+128, ch+128)) #left, top, right, bottom
-            mask_with_poeple = street_img2.crop((cw-128, ch-128, cw+128, ch+128)) #left, top, right, bottom      
+            #input_img = street_img.crop((cw-128, ch-128, cw+128, ch+128)) #left, top, right, bottom
+            #mask_with_poeple = street_img2.crop((cw-128, ch-128, cw+128, ch+128)) #left, top, right, bottom      
+            input_img = street_img
+            mask_with_poeple = street_img2
 
             plain_mask.paste(masks_img,(box_x,box_y))
-            plain_mask = plain_mask.crop((cw-128, ch-128, cw+128, ch+128))        
+            #plain_mask = plain_mask.crop((cw-128, ch-128, cw+128, ch+128))        
             
             if self.transform is not None:
                 input_img = self.transform(input_img)

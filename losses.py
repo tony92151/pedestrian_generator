@@ -4,16 +4,16 @@ import torch
 def completion_network_loss(input, output, mask):
     return mse_loss(output * mask, input * mask)
 
-def completion_network_loss_P(background, person, mask, output, lefttop, height = 64 , width = 32, devices = 'cuda:0'):
+def completion_network_loss_P(background, person, mask, output, lefttop, height = 128 , width = 64, devices = 'cuda:0'):
     """
     * background:
         - shape: batchsize * 3 * 256 * 256
     * output:
         - shape: batchsize * 3 * 256 * 256
     """
-    output_crop = torch.zeros([output.shape[0],3,128,64]).to(devices)
-    person_crop = torch.zeros([output.shape[0],3,128,64]).to(devices)
-    mask_crop = torch.zeros([output.shape[0],3,128,64]).to(devices)
+    output_crop = torch.zeros([output.shape[0],3,height,width]).to(devices)
+    person_crop = torch.zeros([output.shape[0],3,height,width]).to(devices)
+    mask_crop = torch.zeros([output.shape[0],3,height,width]).to(devices)
     
     #mask = torch.zeros(size = output.shape).to(devices)
     batchsize = output.shape[0]

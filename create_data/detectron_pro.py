@@ -61,7 +61,7 @@ def detectron_mask_img_composite(img_path,resize=None):
     return result
 
 def detectron_multi_mask_img(img_path,resize=None):
-    psize = 300
+    psize = 500
     img = cv2.imread(img_path)
     if (resize!=None):
         img = cv2.resize(img, resize)
@@ -94,7 +94,7 @@ def detectron_multi_mask_img(img_path,resize=None):
         plain_mask += i
     
     mask = plain_mask[int((psize/2)-(img.shape[0]/2)):int((psize/2)+(img.shape[0]/2)),int((psize/2)-(img.shape[1]/2)):int((psize/2)+(img.shape[1]/2))]
-    return mask
+    return mask, outputs
     
     
         

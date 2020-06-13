@@ -23,13 +23,13 @@ class ImageDataset(data.Dataset):
 
         
         self.people_imgpaths = [i.replace('street', 'people') for i in self.street_imgpaths]
-        # self.position_jsonpaths = []
+        self.position_jsonpaths = []
         self.poeple_maskspaths = [i.replace('street', 'mask') for i in self.street_imgpaths]
 
-        # for i in self.street_imgpaths:
-        #     js = i.replace('street', 'json')
-        #     js = js.replace('jpg', 'json')
-        #     self.position_jsonpaths.append(js)
+        for i in self.street_imgpaths:
+            js = i.replace('street', 'json')
+            js = js.replace('jpg', 'json')
+            self.position_jsonpaths.append(js)
         
         self.load2meme = load2meme
         if (self.load2meme):
@@ -67,24 +67,25 @@ class ImageDataset(data.Dataset):
             
 
             # Load data information from .json file
-            # with open(self.position_jsonpaths[index]) as json_file:
-            #     data = json.load(json_file)
+            with open(self.position_jsonpaths[index]) as json_file:
+                data = json.load(json_file)
 
             #w_list = [111,222,333,444,555]
             h_list = [200,220,240,296,352] # from top to buttom (center of people image)
             h_scale = [(48,96),(54,108),(64,128),(80,160),(120,240)] # top might be smaller
 
             #box_x, box_y, box_w, box_h = int(data[0]['pos'][0]), int(data[0]['pos'][1]), int(data[0]['pos'][2]),int(data[0]['pos'][3])
+            box_x, box_y, box_w, box_h = int(data[0]['pos'][0]), int(data[0]['pos'][1]), int(data[0]['pos'][3]),int(data[0]['pos'][2])
 
-            h_pick = random.randint(0,4) # index
-            w_pick = random.randint(128,512) #  128 <= w <=512 (center of people image)
+            #h_pick = random.randint(0,4) # index
+            #w_pick = random.randint(128,512) #  128 <= w <=512 (center of people image)
 
-            cw, ch = w_pick, h_list[h_pick]
+            cw, ch = int(box_y+box_w/2), int(box_y+box_h/2)
             
-            box_x, box_y, box_w, box_h = int(cw - h_scale[h_pick][0]/2), int(ch - h_scale[h_pick][1]/2), h_scale[h_pick][0], h_scale[h_pick][1]
+            #box_x, box_y, box_w, box_h = int(cw - h_scale[h_pick][0]/2), int(ch - h_scale[h_pick][1]/2), h_scale[h_pick][0], h_scale[h_pick][1]
 
-            masks_img = masks_img.resize(h_scale[h_pick], Image.BILINEAR )
-            people_img = people_img.resize(h_scale[h_pick], Image.BILINEAR )
+            masks_img = masks_img.resize((box_w, box_h), Image.BILINEAR )
+            people_img = people_img.resize((box_w, box_h), Image.BILINEAR )
             #cw, ch = math.floor(street_img.size[0]/2), math.floor(street_img.size[1]/2)
             #cw, ch = w_pick, h_list[h_pick]
             #print(masks_img.size)
@@ -94,14 +95,14 @@ class ImageDataset(data.Dataset):
             
             lt = [cw, ch]
 
-            input_img = street_img.crop((cw-128, ch-128, cw+128, ch+128)) #left, top, right, bottom
-            mask_with_poeple = street_img2.crop((cw-128, ch-128, cw+128, ch+128)) #left, top, right, bottom  
+            #input_img = street_img.crop((cw-128, ch-128, cw+128, ch+128)) #left, top, right, bottom
+            #mask_with_poeple = street_img2.crop((cw-128, ch-128, cw+128, ch+128)) #left, top, right, bottom  
 
-            #input_img = street_img
-            #mask_with_poeple = street_img2
+            input_img = street_img
+            mask_with_poeple = street_img2
 
             plain_mask.paste(masks_img,(box_x,box_y))
-            plain_mask = plain_mask.crop((cw-128, ch-128, cw+128, ch+128))
+            #plain_mask = plain_mask.crop((cw-128, ch-128, cw+128, ch+128))
 
             #input_img = input_img.convert('RGB')
             if self.transform is not None:

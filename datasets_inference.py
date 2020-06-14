@@ -75,7 +75,7 @@ class ImageDataset(data.Dataset):
             h_scale = [(48,96),(54,108),(64,128),(80,160),(120,240)] # top might be smaller
 
             #box_x, box_y, box_w, box_h = int(data[0]['pos'][0]), int(data[0]['pos'][1]), int(data[0]['pos'][2]),int(data[0]['pos'][3])
-            box_x, box_y, box_w, box_h = int(data[0]['pos'][0]), int(data[0]['pos'][1]), int(data[0]['pos'][3]),int(data[0]['pos'][2])
+            box_x, box_y, box_w, box_h = int(data[0]['pos'][0]), int(data[0]['pos'][1]), int(data[0]['pos'][2]),int(data[0]['pos'][3])
 
             #h_pick = random.randint(0,4) # index
             #w_pick = random.randint(128,512) #  128 <= w <=512 (center of people image)

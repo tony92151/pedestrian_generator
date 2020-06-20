@@ -19,7 +19,7 @@ class ImageDataset(data.Dataset):
         self.transform = transform
         self.transform2 = transform2
         
-        self.street_imgpaths = sorted(glob.glob(data_dir+'/street/*'), key=lambda x: x[-10:-3])[:3000]
+        self.street_imgpaths = sorted(glob.glob(data_dir+'/street/*'), key=lambda x: x[-10:-3])
 
         
         self.people_imgpaths = [i.replace('street', 'people') for i in self.street_imgpaths]

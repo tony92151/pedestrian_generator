@@ -24,10 +24,15 @@ Each image have 2 or 3 people (half chance)
 In the training dataset
 
 caltech_origin_mask8_42000.zip
+
 ├── street
+
 ├── people
+
 ├── mask
+
 ├── json
+
 └── street_json
 
 ## Training 

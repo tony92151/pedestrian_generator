@@ -4,13 +4,15 @@ This repo was clone from [GLCIC-PyTorch](https://github.com/otenim/GLCIC-PyTorch
 
 # What we do?
 
+![iamge](images/studypath.jpg)
+
 ## Prepare training dataset
 
- In our last version, we first convert [Caltech Pedestrian Detection Benchmark](http://www.vision.caltech.edu/Image_Datasets/CaltechPedestrians/) dataset to image files by [caltech_pedestrian_extractor](https://github.com/dbcollection/caltech_pedestrian_extractor)(.seq to .jpg).
+In our last version, we first convert [Caltech Pedestrian Detection Benchmark](http://www.vision.caltech.edu/Image_Datasets/CaltechPedestrians/) dataset to image files by [caltech_pedestrian_extractor](https://github.com/dbcollection/caltech_pedestrian_extractor)(.seq to .jpg).
 
- And we separate the caltech in two dataset, one have pedestrian on the image and the others is not.
+ And we separate the caltech in two dataset, one have pedestrian on the image and the other hasn't. (the imgae have pedestrian will disturb the result)
 
- > see [caltech_for_detectron.ipynb](create_data/caltech_for_detectron.ipynb)
+> see [caltech_for_detectron.ipynb](create_data/caltech_for_detectron.ipynb)
 
 And we also prepare the pedestrian data from [Market-1501 Dataset](http://www.liangzheng.com.cn/Project/project_reid.html) dataset with mask which from datectron
 

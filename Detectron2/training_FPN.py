@@ -88,8 +88,9 @@ if args.second_data_dir != None:
     print("read second dataset")
     data1 = data_pathlist_json[:int(num_of_data*data_p)]
     data2 = second_data_pathlist_json[:(num_of_data - int(num_of_data*data_p))]
+    data3 = [i.replace('street_json', 'json') for i in data2]
     
-    data_pathlist_json = data1 + data2
+    data_pathlist_json = data1 + data3
     
 print("*"*20)
 print("Using "+str(data_p)+'% first-dataset and '+str(1 - data_p)+'% second-dataset ')

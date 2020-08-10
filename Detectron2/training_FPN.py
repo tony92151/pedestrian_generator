@@ -83,17 +83,21 @@ def take_path(path):
 data_pathlist_json = take_path(data_path+'street_json/')
 
 if args.second_data_dir != None:
-    second_data_pathlist_json = take_path(second_data_path+'street_json/')
+    second_data_pathlist_json = take_path(second_data_path+'json/')
     
     print("read second dataset")
     data1 = data_pathlist_json[:int(num_of_data*data_p)]
     data2 = second_data_pathlist_json[:(num_of_data - int(num_of_data*data_p))]
-    data3 = [i.replace('street_json', 'json') for i in data2]
+
+    data_pathlist_json = data1 + data2
     
-    data_pathlist_json = data1 + data3
+train_people_jsonlist = data_pathlist_json
+random.shuffle(train_people_jsonlist)
+train_people_imagelist = [i.replace('street_json', 'street').replace('/json/', '/output/').replace('.json', '.jpg') for i in train_people_jsonlist]
+
     
 print("*"*20)
-print("Using "+str(data_p)+'% first-dataset and '+str(1 - data_p)+'% second-dataset ')
+print("Using "+str(data_p*100)+'% first-dataset and '+str((1 - data_p)*100)+'% second-dataset ')
 print("*"*20)
     
 
@@ -103,10 +107,6 @@ print("*"*20)
 #     data_pathlist_json = random.sample(data_pathlist_json, num_of_data)
 
 
-train_people_jsonlist = data_pathlist_json
-random.shuffle(train_people_jsonlist)
-
-train_people_imagelist = [i.replace('street_json', 'street').replace('json', 'jpg') for i in train_people_jsonlist]
 
 
 # print(len(train_people_imagelist))

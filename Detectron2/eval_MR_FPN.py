@@ -352,7 +352,7 @@ for threshold in range(40,105,2):
     score_threshold = threshold /100
     #cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = score_threshold
     #predictor = DefaultPredictor(cfg)
-    predictor = getmodel(0.5)
+    predictor = getmodel(score_threshold)
     
     for x, dic in tqdm(infer_dataloader):
         imgs = Variable(x).cuda()

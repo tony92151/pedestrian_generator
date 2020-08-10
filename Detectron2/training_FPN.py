@@ -91,6 +91,9 @@ if args.second_data_dir != None:
 
     data_pathlist_json = data1 + data2
     
+else:
+    data_pathlist_json = data_pathlist_json[:num_of_data]
+    
 train_people_jsonlist = data_pathlist_json
 random.shuffle(train_people_jsonlist)
 train_people_imagelist = [i.replace('street_json', 'street').replace('/json/', '/output/').replace('.json', '.jpg') for i in train_people_jsonlist]

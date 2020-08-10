@@ -1,6 +1,6 @@
 import detectron2
 from detectron2.utils.logger import setup_logger
-setup_logger()
+#setup_logger()
 
 # import some common libraries
 import numpy as np
@@ -26,6 +26,7 @@ import os
 import numpy as np
 import json
 from detectron2.structures import BoxMode
+import sys
 
 ######################################################################################
 import argparse
@@ -33,6 +34,9 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('--data_dir', type=str, default=None)
 parser.add_argument('--out_dir', type=str, default=None)
+parser.add_argument('--data_p', type=float, default=1.0)
+
+parser.add_argument('--second_data_dir', type=str, default=None)
 
 parser.add_argument('--num_of_data', type=int, default=42000)
 parser.add_argument('--data_random', type=bool, default=False)
@@ -49,6 +53,12 @@ out_path = args.out_dir
 num_of_data = args.num_of_data
 
 data_random_select = args.data_random
+
+
+if args.second_data_dir != None:
+    second_data_path = args.second_data_dir
+    data_p = args.data_p
+    print(data_p)
 
 
 # data_path = '/root/notebooks/final/caltech_origin_data_refine/'
@@ -72,39 +82,31 @@ def take_path(path):
 
 data_pathlist_json = take_path(data_path+'street_json/')
 
-if not data_random_select:
-    data_pathlist_json = data_pathlist_json[:num_of_data]
-else:
-    data_pathlist_json = random.sample(data_pathlist_json, num_of_data)
+if args.second_data_dir != None:
+    second_data_pathlist_json = take_path(second_data_path+'street_json/')
     
-# print(train_data_pathlist_json[:10])
-
-# print(len(train_data_pathlist_json))
-# print(train_data_pathlist_json[78978][:-5])
-# with open(train_data_pathlist_json[0], 'r') as t :
-#     print(json.load(t))
+    print("read second dataset")
+    data1 = data_pathlist_json[:int(num_of_data*data_p)]
+    data2 = second_data_pathlist_json[:(num_of_data - int(num_of_data*data_p))]
     
-# people_jsonlist = []
-# people_imagelist = []
-# with open('./people_jsonlist_final_v2', 'r') as j:
-#     lines = j.readlines()
-#     for line in lines:
-#         people_jsonlist.append('/home/tedbest2/Desktop/repo/'+line[29:-1])
-# with open('./people_imagelist_final_v2', 'r') as i:
-#     lines = i.readlines()
-#     for line in lines:
-#         people_imagelist.append('/home/tedbest2/Desktop/repo/'+line[29:-1])
+    data_pathlist_json = data1 + data2
+    
+print("*"*20)
+print("Using "+str(data_p)+'% first-dataset and '+str(1 - data_p)+'% second-dataset ')
+print("*"*20)
+    
 
-# print(len(people_jsonlist), len(people_imagelist))
-# print(people_imagelist[:2])
-# print(people_jsonlist[:2])
+# if not data_random_select:
+#     data_pathlist_json = data_pathlist_json[:num_of_data]
+# else:
+#     data_pathlist_json = random.sample(data_pathlist_json, num_of_data)
 
 
 train_people_jsonlist = data_pathlist_json
-train_people_imagelist = [i.replace('street_json', 'street').replace('json', 'jpg') for i in data_pathlist_json]
+random.shuffle(train_people_jsonlist)
 
-test_people_jsonlist = data_pathlist_json
-test_people_imagelist = [i.replace('street_json', 'street').replace('json', 'jpg') for i in data_pathlist_json]
+train_people_imagelist = [i.replace('street_json', 'street').replace('json', 'jpg') for i in train_people_jsonlist]
+
 
 # print(len(train_people_imagelist))
 def get_pedestrain_dict(image_list, json_list):

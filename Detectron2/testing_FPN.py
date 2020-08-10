@@ -119,7 +119,8 @@ DatasetCatalog.register("pedestrain_test", lambda : get_pedestrain_dict(test_peo
 MetadataCatalog.get("pedestrain_test").set(thing_classes=["person"])
 
 cfg = get_cfg()
-cfg.MODEL.WEIGHTS = os.path.join(model_path, "model_final.pth")
+# cfg.MODEL.WEIGHTS = os.path.join(model_path, "model_final.pth")
+DetectionCheckpointer(model).load(os.path.join(model_path, "model_final.pth"))
 cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.7   # set the testing threshold for this model
 cfg.DATASETS.TEST = ("pedestrain_test", )
 cfg.OUTPUT_DIR = out_path

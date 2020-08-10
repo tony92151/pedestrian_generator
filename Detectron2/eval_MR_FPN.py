@@ -387,7 +387,7 @@ for threshold in range(40,105,2):
     matplot_y_test.append(sum(MR_list)/len(MR_list))
     
     MR_plot.append([sum(FP_list)/len(FP_list), sum(MR_list)/len(MR_list)])
-    break
+    
     #mean the MR_list and FP_list
     
 with open(os.path.join(model_path, "model_result.csv") , 'w+', newline ='') as f:

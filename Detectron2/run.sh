@@ -13,6 +13,6 @@
 # python testing_FPN.py --data_dir '/root/notebooks/final/caltech_origin_data_refine/' --out_dir '/root/notebooks/final/detectron2_out_part3_0p/test/' --num_of_data 400 | tee part3_test.log
 
 
-python eval_MR_FPN.py --data_dir '/root/notebooks/final/caltech_origin_data_refine/' --model_dir '/root/notebooks/final/detectron2_out_part3_0p/' --num_of_data 4000 --batch 1 | tee part4_eval_0p.log
+python eval_MR_FPN2.py --data_dir '/root/notebooks/final/caltech_origin_data_refine/' --model_dir '/root/notebooks/final/detectron2_out_part3_0p/' --num_of_data 4000 --batch 10 --num_worker 5 | tee part4_eval_2_0p.log
 
-python eval_MR_FPN.py --data_dir '/root/notebooks/final/caltech_origin_data_refine/' --model_dir '/root/notebooks/final/detectron2_out_part3_25p/' --num_of_data 4000 --batch 1 | tee part4_eval_25p.log
+python eval_MR_FPN2.py --data_dir '/root/notebooks/final/caltech_origin_data_refine/' --model_dir '/root/notebooks/final/detectron2_out_part3_25p/' --num_of_data 4000 --batch 10 --num_worker 5 | tee part4_eval_2_25p.log

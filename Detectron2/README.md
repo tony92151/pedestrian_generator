@@ -36,9 +36,12 @@ python training_FPN.py --data_dir '/root/notebooks/final/caltech_origin_data_ref
 
 ## MR-FPPI 
 
+```bash=
+python eval_MR_FPN2.py --data_dir '/root/notebooks/final/caltech_origin_data_refine/' --model_dir '/root/notebooks/final/detectron2_out_part3_0p/' --num_of_data 4000 --batch 10 | tee part4_eval_0p.log
+```
 
 ## Plot
 
 ```bash=
-python plot.py --csv_path '/root/notebooks/Module_final/detectron2_output/detectron2_out_part3_100p/model_result.csv' --output_dir '/root/notebooks/Module_final/detectron2_output/detectron2_out_part3_100p/'
+python plot.py --csv_path '/root/notebooks/final/detectron2_output/detectron2_out_part3_0p/model_result.csv' --output_dir '/root/notebooks/final/detectron2_out_part3_0p/'
 ```

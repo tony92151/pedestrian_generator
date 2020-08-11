@@ -139,15 +139,18 @@ class DefaultBatchPredictor:
 
     def __init__(self, cfg, togpu=False, modelPath=None):
         self.cfg = cfg.clone()  # cfg can be modified by model
+#         self.cfg.MODEL.WEIGHTS = modelPath     
         self.model = build_model(self.cfg)
         self.model.eval()
 
         checkpointer = DetectionCheckpointer(self.model)
         
         if modelPath==None:
-            checkpointer.load(cfg.MODEL.WEIGHTS)
+            checkpointer.load(self.cfg.MODEL.WEIGHTS)
+            print("Load weight from : ", self.cfg.MODEL.WEIGHTS)
         else:
             checkpointer.load(modelPath)
+            print("Load weight from : ", modelPath)
 
         self.aug = T.ResizeShortestEdge(
             [cfg.INPUT.MIN_SIZE_TEST, cfg.INPUT.MIN_SIZE_TEST], cfg.INPUT.MAX_SIZE_TEST

@@ -21,7 +21,7 @@ python training_FPN.py --data_dir '/root/notebooks/final/caltech_origin_data_ref
 
 ### Training mixture dataset
 
-Download two file and unzip (unzip `output_8.zip `in `caltech_origin_mask8_42000` folder) \
+Download two file and unzip (unzip `output_8.zip `in `caltech_origin_mask8_42000` folder) 
 1. [caltech_origin_mask8_42000.zip](https://drive.google.com/file/d/1YrVsXYS3qYge5wEe42cGwksSBIAjzvsL/view?usp=sharing) \
 2. [output_8.zip(gandata generade from caltech_origin_mask8_42000.zip)](https://drive.google.com/file/d/1ifYbp3PEnsCG3VYi2tVSiTyan355b0Zs/view?usp=sharing)
 
@@ -34,4 +34,9 @@ python training_FPN.py --data_dir '/root/notebooks/final/caltech_origin_data_ref
 # This training with mixture of 75% first-dataset and 25% second-dataset
 ```
 
-## MR-FPPI 
+## MR-FPPI (MR calculate error)
+
+
+```bash=
+python eval_MR_FPN.py --data_dir '/root/notebooks/final/caltech_origin_data_refine/' --model_dir '/root/notebooks/final/detectron2_out_part3_0p/' --num_of_data 4000 --batch 1 | tee part4_eval_0p.log
+```

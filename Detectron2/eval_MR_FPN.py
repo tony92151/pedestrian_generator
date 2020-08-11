@@ -34,7 +34,7 @@ from detectron2.modeling import build_model
 from torch.utils.data import Dataset, DataLoader
 from torch.autograd import Variable
 import csv 
-
+from default import DefaultBatchPredictor
 ######################################################################################
 import argparse
 
@@ -49,6 +49,7 @@ parser.add_argument('--data_random', type=bool, default=False)
 
 parser.add_argument('-f')
 args = parser.parse_args()
+
 ######################################################################################
 
 data_path = args.data_dir
@@ -135,12 +136,13 @@ class inference_Dataset(Dataset):
         return image, self.dic[idx]
     
 data_test = inference_Dataset(train_people_imagelist, dataset_dicts)
-
+print(dataset_dicts[0])
 # _,a,b = data_test.__getitem__(0)
 # print(a)
 # print(b)
     
 infer_dataloader = DataLoader(inference_Dataset(train_people_imagelist, dataset_dicts),batch_size=batch,num_workers=6)
+
 
 # test_people_jsonlist = data_pathlist_json
 # test_people_imagelist = [i.replace('street_json', 'street').replace('json', 'jpg') for i in data_pathlist_json]
@@ -178,97 +180,10 @@ def getmodel(threadh=0.7):
     
     return model
 
-def dataset_batch(dataset, bat):
-    batch_data = []
-    temp = []
-    for i in dataset:
-        if len(temp)<bat:
-            temp.append(i)
-        elif(i==dataset[-1]):
-            batch_data.append(temp)
-        else:
-            batch_data.append(temp)
-            temp = []
-            temp.append(i)
-    return batch_data
-
 
         
         
-####################################################################################################
-#https://github.com/facebookresearch/maskrcnn-benchmark/issues/430
-def delete_net_weights_for_finetune(
-	model_file, 
-	out_file, 
-	rpn_final_convs=False, 
-	bbox_final_fcs=True, 
-	mask_final_conv=True
-):
-	del_keys = []
-	checkpoint = torch.load(model_file)
-	print("keys: {}".format(checkpoint.keys()))
-	m = checkpoint['model']
 
-	if rpn_final_convs:
-		# 'module.rpn.anchor_generator.cell_anchors.0', 
-		# 'module.rpn.anchor_generator.cell_anchors.1', 
-		# 'module.rpn.anchor_generator.cell_anchors.2', 
-		# 'module.rpn.anchor_generator.cell_anchors.3', 
-		# 'module.rpn.anchor_generator.cell_anchors.4'
-		# 'module.rpn.head.cls_logits.weight', 
-		# 'module.rpn.head.cls_logits.bias', 
-		# 'module.rpn.head.bbox_pred.weight', 
-		# 'module.rpn.head.bbox_pred.bias',
-		del_keys.extend([
-			k for k in m.keys() if k.find("rpn.anchor_generator") is not -1
-		])
-		del_keys.extend([
-			k for k in m.keys() if k.find("rpn.head.cls_logits") is not -1
-		])
-		del_keys.extend([
-			k for k in m.keys() if k.find("rpn.head.bbox_pred") is not -1
-		])
-
-	if bbox_final_fcs:
-		# 'module.roi_heads.box.predictor.cls_score.weight', 
-		# 'module.roi_heads.box.predictor.cls_score.bias', 
-		# 'module.roi_heads.box.predictor.bbox_pred.weight', 
-		# 'module.roi_heads.box.predictor.bbox_pred.bias',
-		del_keys.extend([
-			k for k in m.keys() if k.find(
-				"roi_heads.box.predictor.cls_score"
-			) is not -1
-		])
-		del_keys.extend([
-			k for k in m.keys() if k.find(
-				"roi_heads.box.predictor.bbox_pred"
-			) is not -1
-		])
-
-	if mask_final_conv:
-		# 'module.roi_heads.mask.predictor.mask_fcn_logits.weight', 
-		# 'module.roi_heads.mask.predictor.mask_fcn_logits.bias',
-		del_keys.extend([
-			k for k in m.keys() if k.find(
-				"roi_heads.mask.predictor.mask_fcn_logits"
-			) is not -1
-		])
-	
-	for k in del_keys:
-		print("del k: {}".format(k))
-		del m[k]
-
-	# checkpoint['model'] = m
-	#print("f: {}\nout_file: {}".format(f, out_file))
-	#recursively_mkdirs(os.path.dirname(out_file))
-	torch.save({"model": m}, out_file)
-    
-def fix_model_build():
-    if  not os.path.isfile(os.path.join(model_path, "model_final_fix.pth")):
-        print("Convert model ...")
-        delete_net_weights_for_finetune(os.path.join(model_path, "model_final.pth"), os.path.join(model_path, "model_final_fix.pth"))
-        print("Fixed model save at : " + str(os.path.join(model_path, "model_final_fix.pth")))
-############################################################
 def compute_iou(rec1, rec2):
     """
     computing IoU
@@ -337,6 +252,11 @@ def compute_TF(outputs, d, iou):
 
 #print(dataset_dicts_batch[0])
 #print(len(dataset_dicts_batch[0]))
+w = 0.005
+thr = []
+for i in range(100):
+    thr.append(float("{:.3f}".format(w)))
+    w+=0.005
 
 iou = 0.5
 
@@ -367,7 +287,8 @@ for threshold in range(40,105,2):
             inputs.append({"image":i})
         
         outputs = predictor(inputs)
-        #print(outputs)
+        print(outputs)
+        print(d)
         for i in outputs:
 #             print(i.['instances'])
             TF_list = compute_TF(i, d, iou)
@@ -383,11 +304,13 @@ for threshold in range(40,105,2):
 
             MR_list.append(MR)
             FP_list.append(FP)
+        break
+        
     matplot_x_test.append(sum(FP_list)/len(FP_list))
     matplot_y_test.append(sum(MR_list)/len(MR_list))
     
     MR_plot.append([sum(FP_list)/len(FP_list), sum(MR_list)/len(MR_list)])
-    
+    break
     #mean the MR_list and FP_list
     
 with open(os.path.join(model_path, "model_result.csv") , 'w+', newline ='') as f:

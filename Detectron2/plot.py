@@ -24,16 +24,20 @@ output_path = output_dir+'/plot.jpg'
 results = []
 x = []
 y = []
+
 with open(csv_path, newline='') as csvfile:
     rows = csv.reader(csvfile)
     for row in rows:
         tmp = map(float,row)
         results.append(list(tmp))
+        x.append(float(row[0]))
+        y.append(float(row[1]))
+        
 print(results)
 fig = plt.figure()
 ax = fig.add_subplot(1, 1, 1)
 
-line = ax.plot(results, 'b', lw=2)
+line = ax.plot(x ,y , 'bo')
 
 ax.set_xscale('log')
 plt.savefig(output_path)

@@ -5,6 +5,7 @@ from detectron2.utils.logger import setup_logger
 import numpy as np
 import cv2
 import random
+import pdb
 #from google.colab.patches import cv2_imshow
 
 # import some common detectron2 utilities
@@ -91,7 +92,7 @@ print("Total images : "+str(len(train_people_imagelist)))
 
 
 iou = 0.5
-def compute_TF(outputs, d, iou):
+def compute_TF(outputs, d, iou=0.5):
     TF_list = []
     for box in outputs['instances'].pred_boxes.to("cpu"):
         
@@ -143,38 +144,17 @@ def compute_iou(rec1, rec2):
 
 #from：https://blog.csdn.net/leviopku/java/article/details/81629492
 
-
-def compuete_MR(threadh=0.6):
+def compute_XY(r, r_dic):
     MR_list =[]
     FP_list = []
     
-    cfg = get_cfg()
-
-    cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.3
-    
-    cfg.MODEL.WEIGHTS = os.path.join(model_path, "model_final.pth")
-    
-    cfg.merge_from_file(model_zoo.get_config_file("Base-RCNN-FPN.yaml"))
-    cfg.DATALOADER.NUM_WORKERS = worker
-    cfg.SOLVER.IMS_PER_BATCH = 3
-    cfg.SOLVER.BASE_LR = 0.00025
-    cfg.SOLVER.MAX_ITER =  50000
-    cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 512
-    cfg.MODEL.ROI_HEADS.NUM_CLASSES = 1 
-    cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.7
-
-    pre = DefaultBatchPredictor(cfg)
-
-    _= pre.create_batch_loader(train_people_imagelist, train_people_jsonlist, batch, worker)
-
-    result, result_dic = pre.batchPredictor()
-    
-    
     TP = 0
-    for i in range(len(result)):
-        outputs = result[i]
-        d = result_dic[i]
-    
+    for i in range(len(r)):
+        outputs = r[i]
+        d = r_dic[i]
+
+        TP = 0
+
         TF_list = compute_TF(outputs, d, iou)
         for TF in TF_list:
             if TF == 'T':
@@ -185,12 +165,47 @@ def compuete_MR(threadh=0.6):
         else: 
             MR = 0
             FP = len(outputs['instances']) - len(d['annotations'])
-        
+
         MR_list.append(MR)
         FP_list.append(FP)
     x = sum(FP_list)/len(FP_list)
     y = sum(MR_list)/len(MR_list)
+    print('X:',x)
+    print('Y:',y)
+    return x,y
     
+
+
+def compuete_MR(threadh=0.6):
+    cfg = get_cfg()
+
+    cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = threadh
+    
+    cfg.MODEL.WEIGHTS = os.path.join(model_path, "model_final.pth")
+    
+    cfg.merge_from_file(model_zoo.get_config_file("Base-RCNN-FPN.yaml"))
+    cfg.DATALOADER.NUM_WORKERS = worker
+    cfg.SOLVER.IMS_PER_BATCH = 3
+    cfg.SOLVER.BASE_LR = 0.00025
+    cfg.SOLVER.MAX_ITER =  50000
+    cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 512
+    cfg.MODEL.ROI_HEADS.NUM_CLASSES = 1 
+    #cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.7
+
+    pre = DefaultBatchPredictor(cfg)
+
+    _= pre.create_batch_loader(train_people_imagelist, train_people_jsonlist, batch, worker)
+
+    result, result_dic = pre.batchPredictor()
+#     rr=[]
+#     for i in range(100):
+#         rer = pre(cv2.imread(train_people_imagelist[i]))
+#         rr.append(rer)
+    
+    #print(result[:3])
+    #print(result_dic[:3])
+    
+    x,y = compute_XY(result, result_dic)
     return x, y #FP, MR
 
 
@@ -198,8 +213,10 @@ def compuete_MR(threadh=0.6):
 
 MR_plot = []
 count = 1
-for threshold in range(40,105,2):
-    print("Threshold test : ", count,'/',len(range(40,105,2)),)
+
+gap = 2
+for threshold in range(40,105,gap):
+    print("Threshold test : ",threshold/100.0," (" ,count,'/',len(range(40,100+gap,gap)), ")")
     x,y = compuete_MR(threshold/100.0)
     MR_plot.append([x,y])
     count+=1

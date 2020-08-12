@@ -108,7 +108,7 @@ class inference_Dataset(Dataset):
         
         #img = Image.open(self.filenames[idx])  # PIL image
         #image = self.transform(img)
-        return image
+        return image, height, width
 
 
 class DefaultBatchPredictor:
@@ -174,10 +174,10 @@ class DefaultBatchPredictor:
         result=[]
         result_d=[]
         with torch.no_grad():
-            for x in tqdm(self.ba_dataloader):
+            for x,h,w in tqdm(self.ba_dataloader):
                 inputs = []  
-                for i in x:
-                    inputs.append({"image":i})
+                for i in range(len(x)):
+                    inputs.append({"image":x[i], "height": h[i], "width": w[i]})
                 outputs = self.model(inputs)
                 
                 #print(dic)

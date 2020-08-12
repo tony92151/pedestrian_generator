@@ -37,9 +37,11 @@ print(results)
 fig = plt.figure()
 ax = fig.add_subplot(1, 1, 1)
 
-line = ax.plot(x ,y , 'bo')
+line = ax.plot(x ,y , 'o-')
 
 ax.set_xscale('log')
+ax.set_yscale('log')
+
 plt.savefig(output_path)
 
 print("Image save at :", output_path)

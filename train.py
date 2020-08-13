@@ -24,8 +24,8 @@ import json
 import time
 
 parser = argparse.ArgumentParser()
-parser.add_argument('data_dir')
-parser.add_argument('result_dir')
+parser.add_argument('--data_dir', type=str, default=None)
+parser.add_argument('--result_dir', type=str, default=None)
 parser.add_argument('--recursive_search', action='store_true', default=False)
 parser.add_argument('--init_model_cn', type=str, default=None)
 parser.add_argument('--init_model_cd', type=str, default=None)
@@ -386,4 +386,7 @@ def main(args):
 
 if __name__ == '__main__':
     args = parser.parse_args()
+    if args.data_dir==None or args.result_dir==None:
+        print("please give data_dir and result_dir arguments.")
+        os.exit()
     main(args)

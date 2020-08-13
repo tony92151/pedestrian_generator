@@ -39,6 +39,8 @@ parser.add_argument('--data_p', type=float, default=1.0)
 parser.add_argument('--second_data_dir', type=str, default=None)
 
 parser.add_argument('--num_of_data', type=int, default=42000)
+parser.add_argument('--num_of_iter', type=int, default=50000)
+
 parser.add_argument('--data_random', type=bool, default=False)
 
 parser.add_argument('-f')
@@ -51,6 +53,8 @@ data_path = args.data_dir
 out_path = args.out_dir
 
 num_of_data = args.num_of_data
+
+num_of_iter = args.num_of_iter
 
 data_random_select = args.data_random
 
@@ -170,7 +174,7 @@ cfg.DATALOADER.NUM_WORKERS = 3
 #cfg.MODEL.WEIGHTS = "detectron2://COCO-Detection/faster_rcnn_R_50_FPN_3x/137849458/model_final_280758.pkl"  # Let training initialize from model zoo
 cfg.SOLVER.IMS_PER_BATCH = 2
 cfg.SOLVER.BASE_LR = 0.00025  # pick a good LR
-cfg.SOLVER.MAX_ITER =  50000   # 300 iterations seems good enough for this toy dataset; you may need to train longer for a practical dataset
+cfg.SOLVER.MAX_ITER =  num_of_iter   # 300 iterations seems good enough for this toy dataset; you may need to train longer for a practical dataset
 cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 512   # faster, and good enough for this toy dataset (default: 512)
 cfg.MODEL.ROI_HEADS.NUM_CLASSES = 1
 cfg.OUTPUT_DIR = out_path

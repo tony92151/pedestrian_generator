@@ -43,5 +43,5 @@ python eval_MR_FPN2.py --data_dir '/root/notebooks/final/caltech_origin_data_ref
 ## Plot
 
 ```bash=
-python plot.py --csv_path '/root/notebooks/final/detectron2_output/detectron2_out_part3_0p/model_result.csv' --output_dir '/root/notebooks/final/detectron2_out_part3_0p/'
+python plot.py --csv_path '/root/notebooks/final/detectron2_output/detectron2_out_part3_0p/model_result.csv' --output_dir '/root/notebooks/final/detectron2_out_part3_0p/plot.jpg'
 ```

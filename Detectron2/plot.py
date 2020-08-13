@@ -8,7 +8,7 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('--csv_path', type=str, default=None)
 
-parser.add_argument('--output_dir', type=str, default=None)
+parser.add_argument('--output_path', type=str, default=None)
 
 parser.add_argument('-f')
 args = parser.parse_args()
@@ -17,9 +17,9 @@ args = parser.parse_args()
 
 csv_path = args.csv_path
 
-output_dir = args.output_dir
+output_dir = args.output_path
 
-output_path = output_dir+'/plot.jpg'
+output_path = output_dir
 
 results = []
 x = []
@@ -38,6 +38,9 @@ fig = plt.figure()
 ax = fig.add_subplot(1, 1, 1)
 
 line = ax.plot(x ,y , 'o-')
+
+ax.set_xlabel('FPPI')
+ax.set_ylabel('MR')
 
 ax.set_xscale('log')
 ax.set_yscale('log')

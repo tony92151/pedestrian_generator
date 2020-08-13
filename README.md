@@ -10,7 +10,12 @@ This repo was clone from [GLCIC-PyTorch](https://github.com/otenim/GLCIC-PyTorch
 
 In our last version, we first convert [Caltech Pedestrian Detection Benchmark](http://www.vision.caltech.edu/Image_Datasets/CaltechPedestrians/) dataset to image files by [caltech_pedestrian_extractor](https://github.com/dbcollection/caltech_pedestrian_extractor)(.seq to .jpg).
 
- And we separate the caltech in two dataset, one have pedestrian on the image and the other hasn't. (the imgae have pedestrian will disturb the result)
+And we separate the caltech in two dataset.(The imgae which have pedestrian on i will disturb the result)
+1. already have pedestrian on the image  > this can be used as baseline data as comparison.
+2. no pedestrian on the image  >  this can be use as training dataset.
+
+⬇️[have pedestrian](https://drive.google.com/file/d/1FOgnF9kFjp5d9xpFZnnprfUI1pYs80MY/view?usp=sharing)
+⬇️[no pedestrian](https://drive.google.com/file/d/1FOgnF9kFjp5d9xpFZnnprfUI1pYs80MY/view?usp=sharing)
 
 > see [caltech_for_detectron.ipynb](create_data/caltech_for_detectron.ipynb)
 
@@ -22,6 +27,8 @@ Finally, we have dataset from above to generate our training dataset. We randoml
 Each image have 2 or 3 people (half chance)
 
 > see [gandatamask5_multi.ipynb](create_data/gandatamask5_multi.ipynb)
+
+⬇️[training dataset](https://drive.google.com/drive/folders/1tsWYMVWiWAKW0S4CFPupRY1QRCfiAWqN?usp=sharing)
 
 In the training dataset
 
@@ -56,6 +63,8 @@ and we have three phase.
 
 
 `Our new dataset`: We use 40000 images we generated and training in 30000 iterations. After that, we training 42000 images from caltech dataset and training in 80000 iterations.
+
+[Detectron2 Benchmark usage](Detectron2)
 
 
 # Contributors

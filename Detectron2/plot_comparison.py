@@ -6,7 +6,7 @@ import os
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-a', '--all_csv_path', type=str, default=None)
+parser.add_argument('-a', '--all_csv_dir', type=str, default=None)
 
 parser.add_argument('-o','--output_dir', type=str, default=None)
 
@@ -15,7 +15,7 @@ args = parser.parse_args()
 
 ######################################################################################
 
-csv_paths = args.all_csv_path
+csv_paths = args.all_csv_dir
 
 output_dir = args.output_dir
 
@@ -40,7 +40,8 @@ for csv_path in os.listdir(csv_paths):
 
 ax.legend( leg, loc='lower left', shadow=True)
 
-    
+ax.set_xlabel('FPPI')
+ax.set_ylabel('MR')
 
 ax.set_xscale('log')
 ax.set_yscale('log')

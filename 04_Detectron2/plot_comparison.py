@@ -1,7 +1,8 @@
-import pylab
+
 import matplotlib.pyplot as plt
 import csv
 import os
+import glob
 ######################################################################################
 import argparse
 
@@ -25,10 +26,14 @@ fig = plt.figure()
 ax = fig.add_subplot(1, 1, 1)
 leg = list()
 
-for csv_path in os.listdir(csv_paths):
+csv_list = glob.glob(csv_paths+'*.csv')
+
+# print(csv_list)
+
+for csv_path in csv_list:
     x = []
     y = []
-    p = csv_paths + csv_path
+    p = csv_path
     with open(p, newline='') as csvfile:
         rows = csv.reader(csvfile)
         for row in rows:
@@ -46,6 +51,7 @@ ax.set_ylabel('MR')
 ax.set_xscale('log')
 ax.set_yscale('log')
 
+plt.gcf().subplots_adjust(left=0.14)
 plt.savefig(output_path)
 
 print("Image save at :", output_path)

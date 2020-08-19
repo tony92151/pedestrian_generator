@@ -6,6 +6,7 @@ import numpy as np
 import cv2
 import random
 import pdb
+import math
 #from google.colab.patches import cv2_imshow
 
 # import some common detectron2 utilities
@@ -174,12 +175,29 @@ def compute_XY(r, r_dic):
     print('Y:',y)
     return x,y
     
+def compuete_LAMR(fppi, mr):
+    
+    fppi_tmp = np.insert(fppi, 0, -1.0)
+    mr_tmp = np.insert(mr, 0, 1.0)
+    
+    ref = np.logspace(-2.0, 0.0, num = 9)
+    for i, ref_i in enumerate(ref):
+        # np.where() will always find at least 1 index, since min(ref) = 0.01 and min(fppi_tmp) = -1.0
+        j = np.where(fppi_tmp <= ref_i)[-1][-1]
+        ref[i] = mr_tmp[j]
+
+    # log(0) is undefined, so we use the np.maximum(1e-10, ref)
+    lamr = math.exp(np.mean(np.log(np.maximum(1e-10, ref))))
+    return lamr
 
 
 def compuete_MR(threadh=0.6):
     cfg = get_cfg()
 
     cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = threadh
+    #cfg.MODEL.RETINANET.SCORE_THRESH_TEST = args.confidence_threshold
+    cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = threadh
+    cfg.MODEL.PANOPTIC_FPN.COMBINE.INSTANCES_CONFIDENCE_THRESH = threadh
     
     cfg.MODEL.WEIGHTS = os.path.join(model_path, "model_final.pth")
     
@@ -218,7 +236,9 @@ gap = 2
 for threshold in range(40,105,gap):
     print("Threshold test : ",threshold/100.0," (" ,count,'/',len(range(40,100+gap,gap)), ")")
     x,y = compuete_MR(threshold/100.0)
-    MR_plot.append([x,y])
+    lamr = compuete_LAMR(x,y)
+    print('LAMR:',lamr)
+    MR_plot.append([threshold,lamr,x,y])
     count+=1
     #break
 

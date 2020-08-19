@@ -1,6 +1,6 @@
 from tqdm import tqdm
 from models import CompletionNetwork, ContextDiscriminator
-from datasets import ImageDataset
+from datasets_fullsize_v1 import ImageDataset
 from losses import completion_network_loss
 from utils import (
     gen_input_mask,
@@ -29,10 +29,10 @@ parser.add_argument('--result_dir', type=str, default=None)
 parser.add_argument('--recursive_search', action='store_true', default=False)
 parser.add_argument('--init_model_cn', type=str, default=None)
 parser.add_argument('--init_model_cd', type=str, default=None)
-parser.add_argument('--steps_1', type=int, default=90000)
-parser.add_argument('--steps_2', type=int, default=10000)
-parser.add_argument('--steps_3', type=int, default=400000)
-parser.add_argument('--snaperiod_1', type=int, default=10000)
+parser.add_argument('--steps_1', type=int, default=3000)
+parser.add_argument('--steps_2', type=int, default=0)
+parser.add_argument('--steps_3', type=int, default=0)
+parser.add_argument('--snaperiod_1', type=int, default=300)
 parser.add_argument('--snaperiod_2', type=int, default=2000)
 parser.add_argument('--snaperiod_3', type=int, default=10000)
 parser.add_argument('--max_holes', type=int, default=1)

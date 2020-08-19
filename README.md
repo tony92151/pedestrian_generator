@@ -17,16 +17,16 @@ And we separate the caltech in two dataset.(The imgae which have pedestrian on i
 ⬇️[have pedestrian](https://drive.google.com/file/d/1FOgnF9kFjp5d9xpFZnnprfUI1pYs80MY/view?usp=sharing)
 ⬇️[no pedestrian](https://drive.google.com/file/d/1FOgnF9kFjp5d9xpFZnnprfUI1pYs80MY/view?usp=sharing)
 
-> see [caltech_for_detectron.ipynb](create_data/caltech_for_detectron.ipynb)
+> see [caltech_for_detectron.ipynb](00_download_and_preprocess/caltech_for_detectron.ipynb)
 
 And we also prepare the pedestrian data from [Market-1501 Dataset](http://www.liangzheng.com.cn/Project/project_reid.html) dataset with mask which from datectron
 
-> see [market_to_mask.ipynb](create_data/market_to_mask.ipynb)
+> see [market_to_mask.ipynb](00_download_and_preprocess/market_to_mask.ipynb)
 
 Finally, we have dataset from above to generate our training dataset. We randomly selecte three posisition where people will be pasted and record the coordinate, the scale and the index of people image in .json format.
 Each image have 2 or 3 people (half chance)
 
-> see [gandatamask5_multi.ipynb](create_data/gandatamask5_multi.ipynb)
+> see [gandatamask5_multi.ipynb](01_gene_train_dataset/gandatamask5_multi.ipynb)
 
 ⬇️[training dataset](https://drive.google.com/drive/folders/1tsWYMVWiWAKW0S4CFPupRY1QRCfiAWqN?usp=sharing)
 

@@ -5,6 +5,10 @@ import numpy as np
 import cv2
 from poissonblending import blend
 
+from multiprocessing import Process, Queue, Pool
+import time
+import sys
+
 
 def gen_input_mask(shape, position, w_h):
     """
@@ -172,6 +176,105 @@ def poisson_blend(x, output, mask):
         ret.append(out)
     ret = torch.cat(ret, dim=0)
     return ret
+
+########################################################################################
+
+def pb(data):
+    print("mm")
+    x, output, mask = data
+    dstimg = transforms.functional.to_pil_image(x)
+    print("mmm")
+    dstimg = np.array(dstimg)[:, :, [2, 1, 0]]
+    srcimg = transforms.functional.to_pil_image(output)
+    print("mmmm")
+    srcimg = np.array(srcimg)[:, :, [2, 1, 0]]
+    msk = transforms.functional.to_pil_image(mask)
+    msk = np.array(msk)[:, :, [2, 1, 0]]
+    print("mmm")
+    center = (320,240)
+    out = cv2.seamlessClone(srcimg, dstimg, msk, center, cv2.NORMAL_CLONE)
+    out = out[:, :, [2, 1, 0]]
+    out = transforms.functional.to_tensor(out)
+    out = torch.unsqueeze(out, dim=0)
+    print("kk")
+    #q.put([i, out])
+    return out
+
+def poisson_blend_m(x, output, mask):
+    
+    q_input = Queue()
+    q_output = Queue()
+
+    x = x.clone().cpu()
+    output = output.clone().cpu()
+    mask = mask.clone().cpu()
+    #mask = torch.cat((mask,mask,mask), dim=1) # convert to 3-channel format
+    num_samples = x.shape[0]
+    ret = []
+    
+#     for i in range(num_samples):
+#         #print('>>>', x[i])
+#         p = Process(target=pb, args=(q_output, [i, x[i], output[i], mask[i]]))
+#         p.daemon = True
+#         p.start()
+#         p.join()
+#         print("join")
+#     print("Done")
+        
+#     for i in range(num_samples): 
+#         print("<in")
+#         ret.append(q_output.get())
+#         print("in")
+#     print(ret)
+        
+#     ret = sorted(ret, key=lambda x: x[0])
+#     ret = [i[1:] for i in ret]
+    
+#     with Pool(4) as p:
+#         ret = p.map(pb, ([[x[i], output[i], mask[i] ] for i in range(num_samples)]))
+#         ret = [result[0] for result in ret]
+#         print(ret)
+    
+    pool = Pool(4)  
+    results = pool.map_async(pb, [[x[i], output[i], mask[i]] for i in range(num_samples)], chunksize=1)
+    
+    #pool.close()
+    #pool.join()
+    
+    
+    ret = results.get()
+
+    ret = torch.cat(ret, dim=0)
+    return ret
+
+# def reader_proc(queue):
+#     ## Read from the queue; this will be spawned as a separate Process
+#     while True:
+#         msg = queue.get()         # Read from the queue and do nothing
+#         if (msg == 'DONE'):
+#             break
+
+# def writer(count, queue):
+#     ## Write to the queue
+#     for ii in range(0, count):
+#         queue.put(ii)             # Write 'count' numbers into the queue
+#     queue.put('DONE')
+
+# if __name__=='__main__':
+#     pqueue = Queue() # writer() writes to pqueue from _this_ process
+#     for count in [10**4, 10**5, 10**6]:             
+#         ### reader_proc() reads from pqueue as a separate process
+#         reader_p = Process(target=reader_proc, args=((pqueue),))
+#         reader_p.daemon = True
+#         reader_p.start()        # Launch reader_proc() as a separate python process
+
+#         _start = time.time()
+#         writer(count, pqueue)    # Send a lot of stuff to reader()
+#         reader_p.join()         # Wait for the reader to finish
+#         print("Sending {0} numbers to Queue() took {1} seconds".format(count, 
+#             (time.time() - _start)))
+
+########################################################################################
 
 
 def poisson_blend_old(input, output, mask):

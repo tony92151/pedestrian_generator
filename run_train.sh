@@ -16,6 +16,7 @@ echo '
 check_exis(){
     if [ -d "$1" ]; then
         echo "Directory exists."
+	exit 1
     else
         echo "Directory does not exists."
         mkdir -p "$1"

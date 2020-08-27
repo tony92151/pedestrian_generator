@@ -47,10 +47,10 @@ out_path = "/root/notebooks/pedestrian_generator_data/caltech_origin_mask10_1000
 
 ####################################################################################
 parser = argparse.ArgumentParser()
-parser.add_argument('--data_dir', type=str, default=data_path)
-parser.add_argument('--result_dir', type=str, default=out_path)
+parser.add_argument('--data_dir', type=str, default=None)
+parser.add_argument('--result_dir', type=str, default=None)
 parser.add_argument('--recursive_search', action='store_true', default=False)
-parser.add_argument('--init_model_cn', type=str, default=model_path)
+parser.add_argument('--init_model_cn', type=str, default=None)
 parser.add_argument('--init_model_cd', type=str, default=None)
 parser.add_argument('--steps_1', type=int, default=8000)
 parser.add_argument('--steps_2', type=int, default=4000)
@@ -77,6 +77,12 @@ parser.add_argument('--arc', type=str, choices=['celeba', 'places2'], default='c
 parser.add_argument('-f')
 
 args = parser.parse_args()
+
+data_path = args.data_dir
+
+model_path = args.init_model_cn
+
+out_path = args.result_dir
 
 # ================================================
 # Preparation

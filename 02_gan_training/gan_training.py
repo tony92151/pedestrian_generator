@@ -72,6 +72,7 @@ args = parser.parse_args()
 
 args.data_dir = os.path.expanduser(args.data_dir)
 args.result_dir = os.path.expanduser(args.result_dir)
+
 if args.init_model_cn != None:
     args.init_model_cn = os.path.expanduser(args.init_model_cn)
 if args.init_model_cd != None:

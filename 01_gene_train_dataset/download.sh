@@ -9,6 +9,14 @@ gdown --id "$ID" -O "$Path"
 
 unzip "$Path"
 
+
+ID="1FOgnF9kFjp5d9xpFZnnprfUI1pYs80MY"
+Path="./caltech_pedestrian_refine_no.zip"
+
+gdown --id "$ID" -O "$Path"
+
+unzip "$Path"
+
 cd market_mask2
 
 ID="195C65Q91b1hrXisKcg6XQ_Lb_8sY5Os0"

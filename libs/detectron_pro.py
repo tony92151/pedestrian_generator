@@ -95,6 +95,38 @@ def detectron_multi_mask_img(img_path,resize=None):
     
     mask = plain_mask[int((psize/2)-(img.shape[0]/2)):int((psize/2)+(img.shape[0]/2)),int((psize/2)-(img.shape[1]/2)):int((psize/2)+(img.shape[1]/2))]
     return mask, outputs
+
+########################################################################
+
+def detectron_person_mask_img(img_path,resize=None):
+    psize = 500
+    img = cv2.imread(img_path)
+    if (resize!=None):
+        img = cv2.resize(img, resize)
+
+    plain_mask = np.zeros([psize,psize]).astype(np.bool) 
+
+    backg = np.zeros([psize,psize,3]).astype(np.uint8)    
+    backg[int((psize/2)-(img.shape[0]/2)):int((psize/2)+(img.shape[0]/2)),int((psize/2)-(img.shape[1]/2)):int((psize/2)+(img.shape[1]/2)),:] = img
+    outputs = predictor(backg)
+
+    cla = outputs['instances'].pred_classes.cpu().numpy()
+
+    have_person=False
+    masks = []
+    for i in range(len(cla)):
+        if (cla[i] == 0): # person
+            masks.append(outputs["instances"].pred_masks.cpu().numpy()[i])
+            have_person=True
+
+
+    #mask = outputs["instances"].pred_masks.cpu().numpy()[0][int((psize/2)-(img.shape[0]/2)):int((psize/2)+(img.shape[0]/2)),int((psize/2)-(img.shape[1]/2)):int((psize/2)+(img.shape[1]/2))]
+
+    for i in masks:
+        plain_mask += i
+    
+    mask = plain_mask[int((psize/2)-(img.shape[0]/2)):int((psize/2)+(img.shape[0]/2)),int((psize/2)-(img.shape[1]/2)):int((psize/2)+(img.shape[1]/2))]
+    return mask, outputs, have_person
     
     
         

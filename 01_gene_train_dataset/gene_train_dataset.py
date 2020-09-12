@@ -140,8 +140,12 @@ for s in ['people', 'mask', 'street', 'street_json','json']:
 
 street_imgs = img_data
 
-street_imgs = random.sample(street_imgs, num_imgs)
-
+if num_imgs<len(street_imgs):
+    street_imgs = random.sample(street_imgs, num_imgs)
+else:
+    street_imgs.append(random.choices(street_imgs, num_imgs-len(street_imgs)))
+    
+    
 random.shuffle(street_imgs)
 
 mask_imgs_ = glob.glob(people_dir+'/market_mask_refine_6467/*.jpg', recursive=True)
